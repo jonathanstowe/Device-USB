@@ -285,8 +285,11 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:955
 #const struct Version * LIBUSB_CALL libusb_get_version(void);
-    sub libusb_get_version(
-                           ) is native(LIB) returns Version { * }
+    sub libusb_get_version() is native(LIB) returns Version { * }
+
+    method version() {
+        libusb_get_version();
+    }
 
 #-From /usr/include/libusb-1.0/libusb.h:956
 #int LIBUSB_CALL libusb_has_capability(uint32 capability);
