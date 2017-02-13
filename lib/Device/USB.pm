@@ -5,10 +5,6 @@ class Device::USB {
     my constant LIB = [ 'usb-1.0', v0 ];
 
 
-## Enumerations
-
-# == /usr/include/libusb-1.0/libusb.h ==
-
 enum libusb_class_code (
    LIBUSB_CLASS_PER_INTERFACE => 0,
    LIBUSB_CLASS_AUDIO => 1,
@@ -128,115 +124,116 @@ enum Transfer_flags (
 enum libusb_capability (
    LIBUSB_CAP_HAS_CAPABILITY => 0
 );
-## Structures
 
-
-# == /usr/include/libusb-1.0/libusb.h ==
-
-class DeviceDescriptor is repr('CStruct') {
-	has uint8                       $.bLength; # Typedef<uint8>->|unsigned char| bLength
-	has uint8                       $.bDescriptorType; # Typedef<uint8>->|unsigned char| bDescriptorType
-	has uint16                      $.bcdUSB; # Typedef<uint16>->|short unsigned int| bcdUSB
-	has uint8                       $.bDeviceClass; # Typedef<uint8>->|unsigned char| bDeviceClass
-	has uint8                       $.bDeviceSubClass; # Typedef<uint8>->|unsigned char| bDeviceSubClass
-	has uint8                       $.bDeviceProtocol; # Typedef<uint8>->|unsigned char| bDeviceProtocol
-	has uint8                       $.bMaxPacketSize0; # Typedef<uint8>->|unsigned char| bMaxPacketSize0
-	has uint16                      $.idVendor; # Typedef<uint16>->|short unsigned int| idVendor
-	has uint16                      $.idProduct; # Typedef<uint16>->|short unsigned int| idProduct
-	has uint16                      $.bcdDevice; # Typedef<uint16>->|short unsigned int| bcdDevice
-	has uint8                       $.iManufacturer; # Typedef<uint8>->|unsigned char| iManufacturer
-	has uint8                       $.iProduct; # Typedef<uint8>->|unsigned char| iProduct
-	has uint8                       $.iSerialNumber; # Typedef<uint8>->|unsigned char| iSerialNumber
-	has uint8                       $.bNumConfigurations; # Typedef<uint8>->|unsigned char| bNumConfigurations
-}
-class EndpointDescriptor is repr('CStruct') {
-	has uint8                       $.bLength; # Typedef<uint8>->|unsigned char| bLength
-	has uint8                       $.bDescriptorType; # Typedef<uint8>->|unsigned char| bDescriptorType
-	has uint8                       $.bEndpointAddress; # Typedef<uint8>->|unsigned char| bEndpointAddress
-	has uint8                       $.bmAttributes; # Typedef<uint8>->|unsigned char| bmAttributes
-	has uint16                      $.wMaxPacketSize; # Typedef<uint16>->|short unsigned int| wMaxPacketSize
-	has uint8                       $.bInterval; # Typedef<uint8>->|unsigned char| bInterval
-	has uint8                       $.bRefresh; # Typedef<uint8>->|unsigned char| bRefresh
-	has uint8                       $.bSynchAddress; # Typedef<uint8>->|unsigned char| bSynchAddress
-	has Pointer[uint8]                $.extra; # const unsigned char* extra
-	has int32                         $.extra_length; # int extra_length
-}
-class InterfaceDescriptor is repr('CStruct') {
-	has uint8                       $.bLength; # Typedef<uint8>->|unsigned char| bLength
-	has uint8                       $.bDescriptorType; # Typedef<uint8>->|unsigned char| bDescriptorType
-	has uint8                       $.bInterfaceNumber; # Typedef<uint8>->|unsigned char| bInterfaceNumber
-	has uint8                       $.bAlternateSetting; # Typedef<uint8>->|unsigned char| bAlternateSetting
-	has uint8                       $.bNumEndpoints; # Typedef<uint8>->|unsigned char| bNumEndpoints
-	has uint8                       $.bInterfaceClass; # Typedef<uint8>->|unsigned char| bInterfaceClass
-	has uint8                       $.bInterfaceSubClass; # Typedef<uint8>->|unsigned char| bInterfaceSubClass
-	has uint8                       $.bInterfaceProtocol; # Typedef<uint8>->|unsigned char| bInterfaceProtocol
-	has uint8                       $.iInterface; # Typedef<uint8>->|unsigned char| iInterface
-	has EndpointDescriptor    $.endpoint; # const EndpointDescriptor* endpoint
-	has Pointer[uint8]                $.extra; # const unsigned char* extra
-	has int32                         $.extra_length; # int extra_length
-}
-class Interface is repr('CStruct') {
-	has InterfaceDescriptor   $.altsetting; # const InterfaceDescriptor* altsetting
-	has int32                         $.num_altsetting; # int num_altsetting
-}
-class ConfigDescriptor is repr('CStruct') {
-	has uint8                       $.bLength; # Typedef<uint8>->|unsigned char| bLength
-	has uint8                       $.bDescriptorType; # Typedef<uint8>->|unsigned char| bDescriptorType
-	has uint16                      $.wTotalLength; # Typedef<uint16>->|short unsigned int| wTotalLength
-	has uint8                       $.bNumInterfaces; # Typedef<uint8>->|unsigned char| bNumInterfaces
-	has uint8                       $.bConfigurationValue; # Typedef<uint8>->|unsigned char| bConfigurationValue
-	has uint8                       $.iConfiguration; # Typedef<uint8>->|unsigned char| iConfiguration
-	has uint8                       $.bmAttributes; # Typedef<uint8>->|unsigned char| bmAttributes
-	has uint8                       $.MaxPower; # Typedef<uint8>->|unsigned char| MaxPower
-	has Interface              $.interface; # const Interface* interface
-	has Pointer[uint8]                $.extra; # const unsigned char* extra
-	has int32                         $.extra_length; # int extra_length
-}
-class ControlSetup is repr('CStruct') {
-	has uint8                       $.bmRequestType; # Typedef<uint8>->|unsigned char| bmRequestType
-	has uint8                       $.bRequest; # Typedef<uint8>->|unsigned char| bRequest
-	has uint16                      $.wValue; # Typedef<uint16>->|short unsigned int| wValue
-	has uint16                      $.wIndex; # Typedef<uint16>->|short unsigned int| wIndex
-	has uint16                      $.wLength; # Typedef<uint16>->|short unsigned int| wLength
-}
-    class Context is repr('CStruct') {
+    class DeviceDescriptor is repr('CStruct') {
+	    has uint8                       $.bLength;
+	    has uint8                       $.bDescriptorType;
+	    has uint16                      $.bcdUSB;
+	    has uint8                       $.bDeviceClass;
+	    has uint8                       $.bDeviceSubClass;
+	    has uint8                       $.bDeviceProtocol;
+	    has uint8                       $.bMaxPacketSize0;
+	    has uint16                      $.idVendor;
+	    has uint16                      $.idProduct;
+	    has uint16                      $.bcdDevice;
+	    has uint8                       $.iManufacturer;
+	    has uint8                       $.iProduct;
+	    has uint8                       $.iSerialNumber;
+	    has uint8                       $.bNumConfigurations;
     }
-    class Device is repr('CStruct') {
+    class EndpointDescriptor is repr('CStruct') {
+	    has uint8                       $.bLength;
+	    has uint8                       $.bDescriptorType;
+	    has uint8                       $.bEndpointAddress;
+	    has uint8                       $.bmAttributes;
+	    has uint16                      $.wMaxPacketSize;
+	    has uint8                       $.bInterval;
+	    has uint8                       $.bRefresh;
+	    has uint8                       $.bSynchAddress;
+	    has CArray[uint8]                $.extra;
+	    has int32                         $.extra_length;
     }
-class DeviceHandle is repr('CStruct') {
-}
-class Version is repr('CStruct') {
-	has uint16                      $.major; # const Typedef<uint16>->|short unsigned int| major
-	has uint16                      $.minor; # const Typedef<uint16>->|short unsigned int| minor
-	has uint16                      $.micro; # const Typedef<uint16>->|short unsigned int| micro
-	has uint16                      $.nano; # const Typedef<uint16>->|short unsigned int| nano
-	has Str                           $.rc; # const char* rc
-	has Str                           $.describe; # const char* describe
-}
-class PacketDescriptor is repr('CStruct') {
-	has uint32                        $.length; # unsigned int length
-	has uint32                        $.actual_length; # unsigned int actual_length
-	has int32                         $.status; # Transfer_status status
-}
-class Transfer is repr('CStruct') {
-	has DeviceHandle          $.dev_handle; # Typedef<DeviceHandle>->|DeviceHandle|* dev_handle
-	has uint8                       $.flags; # Typedef<uint8>->|unsigned char| flags
-	has uint8                         $.endpoint; # unsigned char endpoint
-	has uint8                         $.type; # unsigned char type
-	has uint32                        $.timeout; # unsigned int timeout
-	has int32                         $.status; # Transfer_status status
-	has int32                         $.length; # int length
-	has int32                         $.actual_length; # int actual_length
-	has Pointer                       $.callback; # Typedef<Transfer_cb_fn>->|F:void ( Transfer*)*| callback
-	has Pointer                       $.user_data; # void* user_data
-	has Pointer[uint8]                $.buffer; # unsigned char* buffer
-	has int32                         $.num_iso_packets; # int num_iso_packets
-	has CArray[PacketDescriptor]    $.iso_packet_desc; # PacketDescriptor[] iso_packet_desc
-}
-class PollFD is repr('CStruct') {
-	has int32                         $.fd; # int fd
-	has int16                         $.events; # short int events
-}
+
+    class InterfaceDescriptor is repr('CStruct') {
+	    has uint8                       $.bLength;
+	    has uint8                       $.bDescriptorType;
+	    has uint8                       $.bInterfaceNumber;
+	    has uint8                       $.bAlternateSetting;
+	    has uint8                       $.bNumEndpoints;
+	    has uint8                       $.bInterfaceClass;
+	    has uint8                       $.bInterfaceSubClass;
+	    has uint8                       $.bInterfaceProtocol;
+	    has uint8                       $.iInterface;
+	    has EndpointDescriptor    $.endpoint;
+	    has CArray[uint8]                $.extra;
+	    has int32                         $.extra_length;
+    }
+    class Interface is repr('CStruct') {
+	    has InterfaceDescriptor   $.altsetting;
+	    has int32                         $.num_altsetting;
+    }
+    class ConfigDescriptor is repr('CStruct') {
+	    has uint8                       $.bLength;
+	    has uint8                       $.bDescriptorType;
+	    has uint16                      $.wTotalLength;
+	    has uint8                       $.bNumInterfaces;
+	    has uint8                       $.bConfigurationValue;
+	    has uint8                       $.iConfiguration;
+	    has uint8                       $.bmAttributes;
+	    has uint8                       $.MaxPower;
+	    has Interface              $.interface;
+	    has CArray[uint8]                $.extra;
+	    has int32                         $.extra_length;
+    }
+
+    class ControlSetup is repr('CStruct') {
+	    has uint8                       $.bmRequestType;
+	    has uint8                       $.bRequest;
+	    has uint16                      $.wValue;
+	    has uint16                      $.wIndex;
+	    has uint16                      $.wLength;
+    }
+
+    class Context is repr('CPointer') {
+    }
+    class Device is repr('CPointer') {
+    }
+    class DeviceHandle is repr('CPointer') {
+    }
+    class Version is repr('CStruct') {
+	    has uint16                      $.major;
+	    has uint16                      $.minor;
+	    has uint16                      $.micro;
+	    has uint16                      $.nano;
+	    has Str                           $.rc;
+	    has Str                           $.describe;
+    }
+    class PacketDescriptor is repr('CStruct') {
+	    has uint32                        $.length;
+	    has uint32                        $.actual_length;
+	    has int32                         $.status;
+    }
+    class Transfer is repr('CStruct') {
+	    has DeviceHandle          $.dev_handle;
+	    has uint8                       $.flags;
+	    has uint8                         $.endpoint;
+	    has uint8                         $.type;
+	    has uint32                        $.timeout;
+	    has int32                         $.status;
+	    has int32                         $.length;
+	    has int32                         $.actual_length;
+	    has Pointer                       $.callback;
+	    has Pointer                       $.user_data;
+	    has CArray[uint8]                $.buffer;
+	    has int32                         $.num_iso_packets;
+	    has CArray[PacketDescriptor]    $.iso_packet_desc;
+    }
+
+    class PollFD is repr('CStruct') {
+	    has int32                         $.fd;
+	    has int16                         $.events;
+    }
+
 ## Extras stuff
 
 =begin comment
@@ -543,7 +540,7 @@ sub libusb_control_transfer_get_setup(Transfer $transfer # Transfer*
 #static inline void libusb_fill_control_setup(unsigned char *buffer,
 #	uint8 bmRequestType, uint8 bRequest, uint16 wValue, uint16 wIndex,
 #	uint16 wLength)
-sub libusb_fill_control_setup(Pointer[uint8]                $buffer # unsigned char*
+sub libusb_fill_control_setup(CArray[uint8]                $buffer # unsigned char*
                              ,uint8                       $bmRequestType # Typedef<uint8>->|unsigned char|
                              ,uint8                       $bRequest # Typedef<uint8>->|unsigned char|
                              ,uint16                      $wValue # Typedef<uint16>->|short unsigned int|
@@ -605,7 +602,7 @@ sub libusb_free_transfer(Transfer $transfer # Transfer*
 #	unsigned int timeout)
 sub libusb_fill_control_transfer(Transfer               $transfer # Transfer*
                                 ,DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
-                                ,Pointer[uint8]                $buffer # unsigned char*
+                                ,CArray[uint8]                $buffer # unsigned char*
                                 ,&callback (Transfer) # Typedef<Transfer_cb_fn>->|F:void ( Transfer*)*|
                                 ,Pointer                       $user_data # void*
                                 ,uint32                        $timeout # unsigned int
@@ -632,7 +629,7 @@ sub libusb_fill_control_transfer(Transfer               $transfer # Transfer*
 sub libusb_fill_bulk_transfer(Transfer               $transfer # Transfer*
                              ,DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                              ,uint8                         $endpoint # unsigned char
-                             ,Pointer[uint8]                $buffer # unsigned char*
+                             ,CArray[uint8]                $buffer # unsigned char*
                              ,int32                         $length # int
                              ,&callback (Transfer) # Typedef<Transfer_cb_fn>->|F:void ( Transfer*)*|
                              ,Pointer                       $user_data # void*
