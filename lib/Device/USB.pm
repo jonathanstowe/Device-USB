@@ -195,10 +195,37 @@ class Device::USB {
         has uint16                      $.wLength;
     }
 
+    sub libusb_error_name(int32 $errcode ) is native(LIB) returns Str { * }
+
+    class X::USB is Exception {
+        has Str $.message;
+        has Int $.code;
+
+        method message() returns Str {
+            if $!code.defined {
+                $!message = libusb_error_name($!code);
+            }
+            $!message;
+        }
+
+    }
+
     class Context is repr('CPointer') {
     }
     class Device is repr('CPointer') {
+        sub libusb_get_device_descriptor(Device $dev, DeviceDescriptor $desc ) is native(LIB) returns int32 { * }
+
+        method device-descriptor() returns DeviceDescriptor {
+            my $dd = DeviceDescriptor.new;
+
+            if (my $code = libusb_get_device_descriptor(self, $dd) ) < 0 {
+                X::USB.new(:$code).throw;
+            }
+
+            $dd;
+        }
     }
+
     class DeviceHandle is repr('CPointer') {
     }
 
@@ -221,18 +248,18 @@ class Device::USB {
         has int32                         $.status;
     }
     class Transfer is repr('CStruct') {
-        has DeviceHandle          $.dev_handle;
+        has DeviceHandle                $.dev_handle;
         has uint8                       $.flags;
-        has uint8                         $.endpoint;
-        has uint8                         $.type;
-        has uint32                        $.timeout;
-        has int32                         $.status;
-        has int32                         $.length;
-        has int32                         $.actual_length;
-        has Pointer                       $.callback;
-        has Pointer                       $.user_data;
-        has CArray[uint8]                $.buffer;
-        has int32                         $.num_iso_packets;
+        has uint8                       $.endpoint;
+        has uint8                       $.type;
+        has uint32                      $.timeout;
+        has int32                       $.status;
+        has int32                       $.length;
+        has int32                       $.actual_length;
+        has Pointer                     $.callback;
+        has Pointer                     $.user_data;
+        has CArray[uint8]               $.buffer;
+        has int32                       $.num_iso_packets;
         has CArray[PacketDescriptor]    $.iso_packet_desc;
     }
 
@@ -279,10 +306,6 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
     has Context $!context;
 
-    class X::USB is Exception {
-        has Str $.message;
-
-    }
     multi submethod BUILD() {
         my $ctx = Pointer[Context].new;
 
@@ -310,9 +333,20 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:954
 #void LIBUSB_CALL libusb_set_debug(Context *ctx, int level);
-    sub libusb_set_debug(Context                $ctx # Typedef<Context>->|Context|*
-                        ,int32                         $level # int
-                         ) is native(LIB)  { * }
+
+    enum LogLevel (
+        LIBUSB_LOG_LEVEL_NONE => 0,
+        LIBUSB_LOG_LEVEL_ERROR => 1,
+        LIBUSB_LOG_LEVEL_WARNING => 2,
+        LIBUSB_LOG_LEVEL_INFO => 3,
+        LIBUSB_LOG_LEVEL_DEBUG => 4,
+    );
+
+    sub libusb_set_debug(Context $ctx, int32 $level) is native(LIB)  { * }
+
+    method log-level(LogLevel $level) {
+        libusb_set_debug($!context, $level);
+    }
 
 #-From /usr/include/libusb-1.0/libusb.h:955
 #const struct Version * LIBUSB_CALL libusb_get_version(void);
@@ -329,22 +363,16 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:957
 #const char * LIBUSB_CALL Error_name(int errcode);
-    sub libusb_error_name(int32 $errcode # int
-                          ) is native(LIB) returns Str { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:960
 #ssize_t LIBUSB_CALL libusb_get_device_list(Context *ctx,
 #    Device ***list);
-    sub libusb_get_device_list(Context                $ctx # Typedef<Context>->|Context|*
-                              ,Pointer[Pointer[Device]]$list # Typedef<Device>->|Device|***
-                               ) is native(LIB) returns ssize_t { * }
+    sub libusb_get_device_list(Context $ctx, Pointer[CArray[Device]] $list is rw ) is native(LIB) returns ssize_t { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:962
 #void LIBUSB_CALL libusb_free_device_list(Device **list,
 #    int unref_devices);
-    sub libusb_free_device_list(Pointer[Device]        $list # Typedef<Device>->|Device|**
-                               ,int32                         $unref_devices # int
-                                ) is native(LIB)  { * }
+    sub libusb_free_device_list(CArray[Device] $list, int32 $unref_devices) is native(LIB)  { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:963
 #Device * LIBUSB_CALL libusb_ref_device(Device *dev);
@@ -363,12 +391,6 @@ constant __pthread_slist_t := __pthread_internal_slist;
                                 ,Pointer[int32]                $config # int*
                                  ) is native(LIB) returns int32 { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:969
-#int LIBUSB_CALL libusb_get_device_descriptor(Device *dev,
-#    struct DeviceDescriptor *desc);
-    sub libusb_get_device_descriptor(Device                 $dev # Typedef<Device>->|Device|*
-                                    ,DeviceDescriptor      $desc # DeviceDescriptor*
-                                     ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:971
 #int LIBUSB_CALL libusb_get_active_config_descriptor(Device *dev,
