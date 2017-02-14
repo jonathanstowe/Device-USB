@@ -127,72 +127,72 @@ class Device::USB {
     );
 
     class DeviceDescriptor is repr('CStruct') {
-	    has uint8                       $.bLength;
-	    has uint8                       $.bDescriptorType;
-	    has uint16                      $.bcdUSB;
-	    has uint8                       $.bDeviceClass;
-	    has uint8                       $.bDeviceSubClass;
-	    has uint8                       $.bDeviceProtocol;
-	    has uint8                       $.bMaxPacketSize0;
-	    has uint16                      $.idVendor;
-	    has uint16                      $.idProduct;
-	    has uint16                      $.bcdDevice;
-	    has uint8                       $.iManufacturer;
-	    has uint8                       $.iProduct;
-	    has uint8                       $.iSerialNumber;
-	    has uint8                       $.bNumConfigurations;
+        has uint8                       $.bLength;
+        has uint8                       $.bDescriptorType;
+        has uint16                      $.bcdUSB;
+        has uint8                       $.bDeviceClass;
+        has uint8                       $.bDeviceSubClass;
+        has uint8                       $.bDeviceProtocol;
+        has uint8                       $.bMaxPacketSize0;
+        has uint16                      $.idVendor;
+        has uint16                      $.idProduct;
+        has uint16                      $.bcdDevice;
+        has uint8                       $.iManufacturer;
+        has uint8                       $.iProduct;
+        has uint8                       $.iSerialNumber;
+        has uint8                       $.bNumConfigurations;
     }
     class EndpointDescriptor is repr('CStruct') {
-	    has uint8                       $.bLength;
-	    has uint8                       $.bDescriptorType;
-	    has uint8                       $.bEndpointAddress;
-	    has uint8                       $.bmAttributes;
-	    has uint16                      $.wMaxPacketSize;
-	    has uint8                       $.bInterval;
-	    has uint8                       $.bRefresh;
-	    has uint8                       $.bSynchAddress;
-	    has CArray[uint8]               $.extra;
-	    has int32                       $.extra_length;
+        has uint8                       $.bLength;
+        has uint8                       $.bDescriptorType;
+        has uint8                       $.bEndpointAddress;
+        has uint8                       $.bmAttributes;
+        has uint16                      $.wMaxPacketSize;
+        has uint8                       $.bInterval;
+        has uint8                       $.bRefresh;
+        has uint8                       $.bSynchAddress;
+        has CArray[uint8]               $.extra;
+        has int32                       $.extra_length;
     }
 
     class InterfaceDescriptor is repr('CStruct') {
-	    has uint8                       $.bLength;
-	    has uint8                       $.bDescriptorType;
-	    has uint8                       $.bInterfaceNumber;
-	    has uint8                       $.bAlternateSetting;
-	    has uint8                       $.bNumEndpoints;
-	    has uint8                       $.bInterfaceClass;
-	    has uint8                       $.bInterfaceSubClass;
-	    has uint8                       $.bInterfaceProtocol;
-	    has uint8                       $.iInterface;
-	    has EndpointDescriptor          $.endpoint;
-	    has CArray[uint8]               $.extra;
-	    has int32                       $.extra_length;
+        has uint8                       $.bLength;
+        has uint8                       $.bDescriptorType;
+        has uint8                       $.bInterfaceNumber;
+        has uint8                       $.bAlternateSetting;
+        has uint8                       $.bNumEndpoints;
+        has uint8                       $.bInterfaceClass;
+        has uint8                       $.bInterfaceSubClass;
+        has uint8                       $.bInterfaceProtocol;
+        has uint8                       $.iInterface;
+        has EndpointDescriptor          $.endpoint;
+        has CArray[uint8]               $.extra;
+        has int32                       $.extra_length;
     }
     class Interface is repr('CStruct') {
-	    has InterfaceDescriptor   $.altsetting;
-	    has int32                 $.num_altsetting;
+        has InterfaceDescriptor   $.altsetting;
+        has int32                 $.num_altsetting;
     }
     class ConfigDescriptor is repr('CStruct') {
-	    has uint8                       $.bLength;
-	    has uint8                       $.bDescriptorType;
-	    has uint16                      $.wTotalLength;
-	    has uint8                       $.bNumInterfaces;
-	    has uint8                       $.bConfigurationValue;
-	    has uint8                       $.iConfiguration;
-	    has uint8                       $.bmAttributes;
-	    has uint8                       $.MaxPower;
-	    has Interface                   $.interface;
-	    has CArray[uint8]               $.extra;
-	    has int32                       $.extra_length;
+        has uint8                       $.bLength;
+        has uint8                       $.bDescriptorType;
+        has uint16                      $.wTotalLength;
+        has uint8                       $.bNumInterfaces;
+        has uint8                       $.bConfigurationValue;
+        has uint8                       $.iConfiguration;
+        has uint8                       $.bmAttributes;
+        has uint8                       $.MaxPower;
+        has Interface                   $.interface;
+        has CArray[uint8]               $.extra;
+        has int32                       $.extra_length;
     }
 
     class ControlSetup is repr('CStruct') {
-	    has uint8                       $.bmRequestType;
-	    has uint8                       $.bRequest;
-	    has uint16                      $.wValue;
-	    has uint16                      $.wIndex;
-	    has uint16                      $.wLength;
+        has uint8                       $.bmRequestType;
+        has uint8                       $.bRequest;
+        has uint16                      $.wValue;
+        has uint16                      $.wIndex;
+        has uint16                      $.wLength;
     }
 
     class Context is repr('CPointer') {
@@ -202,38 +202,43 @@ class Device::USB {
     class DeviceHandle is repr('CPointer') {
     }
 
+
     class Version is repr('CStruct') {
-	    has uint16                      $.major;
-	    has uint16                      $.minor;
-	    has uint16                      $.micro;
-	    has uint16                      $.nano;
-	    has Str                         $.rc;
-	    has Str                         $.describe;
+        has uint16                      $.major;
+        has uint16                      $.minor;
+        has uint16                      $.micro;
+        has uint16                      $.nano;
+        has Str                         $.rc;
+        has Str                         $.describe;
+        method Str() returns Str {
+            sprintf "%i.%i.%i", $!major, $!minor, $!micro;
+        }
     }
+
     class PacketDescriptor is repr('CStruct') {
-	    has uint32                        $.length;
-	    has uint32                        $.actual_length;
-	    has int32                         $.status;
+        has uint32                        $.length;
+        has uint32                        $.actual_length;
+        has int32                         $.status;
     }
     class Transfer is repr('CStruct') {
-	    has DeviceHandle          $.dev_handle;
-	    has uint8                       $.flags;
-	    has uint8                         $.endpoint;
-	    has uint8                         $.type;
-	    has uint32                        $.timeout;
-	    has int32                         $.status;
-	    has int32                         $.length;
-	    has int32                         $.actual_length;
-	    has Pointer                       $.callback;
-	    has Pointer                       $.user_data;
-	    has CArray[uint8]                $.buffer;
-	    has int32                         $.num_iso_packets;
-	    has CArray[PacketDescriptor]    $.iso_packet_desc;
+        has DeviceHandle          $.dev_handle;
+        has uint8                       $.flags;
+        has uint8                         $.endpoint;
+        has uint8                         $.type;
+        has uint32                        $.timeout;
+        has int32                         $.status;
+        has int32                         $.length;
+        has int32                         $.actual_length;
+        has Pointer                       $.callback;
+        has Pointer                       $.user_data;
+        has CArray[uint8]                $.buffer;
+        has int32                         $.num_iso_packets;
+        has CArray[PacketDescriptor]    $.iso_packet_desc;
     }
 
     class PollFD is repr('CStruct') {
-	    has int32                         $.fd;
-	    has int16                         $.events;
+        has int32                         $.fd;
+        has int16                         $.events;
     }
 
 ## Extras stuff
@@ -269,13 +274,39 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:952
 #int LIBUSB_CALL libusb_init(Context **ctx);
-    sub libusb_init(Pointer[Context] $ctx # Typedef<Context>->|Context|**
-                    ) is native(LIB) returns int32 { * }
+    sub libusb_init(Pointer[Context] $ctx is rw ) is native(LIB) returns int32 { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:953
-#void LIBUSB_CALL libusb_exit(Context *ctx);
-    sub libusb_exit(Context $ctx # Typedef<Context>->|Context|*
-                    ) is native(LIB)  { * }
+
+    has Context $!context;
+
+    class X::USB is Exception {
+        has Str $.message;
+
+    }
+    multi submethod BUILD() {
+        my $ctx = Pointer[Context].new;
+
+        if libusb_init($ctx) < 0 {
+            X::USB.new(message => "Cannot initialise libusb");
+        }
+        else {
+            $!context = $ctx.deref;
+        }
+    }
+
+
+    sub libusb_exit(Context $ctx) is native(LIB)  { * }
+
+    method dispose() {
+        if $!context.defined {
+            libusb_exit($!context);
+            $!context = Context;
+        }
+    }
+
+    method DESTROY() {
+        self.dispose;
+    }
 
 #-From /usr/include/libusb-1.0/libusb.h:954
 #void LIBUSB_CALL libusb_set_debug(Context *ctx, int level);
@@ -303,14 +334,14 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:960
 #ssize_t LIBUSB_CALL libusb_get_device_list(Context *ctx,
-#	Device ***list);
+#    Device ***list);
     sub libusb_get_device_list(Context                $ctx # Typedef<Context>->|Context|*
                               ,Pointer[Pointer[Device]]$list # Typedef<Device>->|Device|***
                                ) is native(LIB) returns ssize_t { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:962
 #void LIBUSB_CALL libusb_free_device_list(Device **list,
-#	int unref_devices);
+#    int unref_devices);
     sub libusb_free_device_list(Pointer[Device]        $list # Typedef<Device>->|Device|**
                                ,int32                         $unref_devices # int
                                 ) is native(LIB)  { * }
@@ -327,28 +358,28 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:967
 #int LIBUSB_CALL libusb_get_configuration(DeviceHandle *dev,
-#	int *config);
+#    int *config);
     sub libusb_get_configuration(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                 ,Pointer[int32]                $config # int*
                                  ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:969
 #int LIBUSB_CALL libusb_get_device_descriptor(Device *dev,
-#	struct DeviceDescriptor *desc);
+#    struct DeviceDescriptor *desc);
     sub libusb_get_device_descriptor(Device                 $dev # Typedef<Device>->|Device|*
                                     ,DeviceDescriptor      $desc # DeviceDescriptor*
                                      ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:971
 #int LIBUSB_CALL libusb_get_active_config_descriptor(Device *dev,
-#	struct ConfigDescriptor **config);
+#    struct ConfigDescriptor **config);
     sub libusb_get_active_config_descriptor(Device                 $dev # Typedef<Device>->|Device|*
                                            ,Pointer[ConfigDescriptor]$config # ConfigDescriptor**
                                             ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:973
 #int LIBUSB_CALL libusb_get_config_descriptor(Device *dev,
-#	uint8 config_index, struct ConfigDescriptor **config);
+#    uint8 config_index, struct ConfigDescriptor **config);
     sub libusb_get_config_descriptor(Device                 $dev # Typedef<Device>->|Device|*
                                     ,uint8                       $config_index # Typedef<uint8>->|unsigned char|
                                     ,Pointer[ConfigDescriptor]$config # ConfigDescriptor**
@@ -356,7 +387,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:975
 #int LIBUSB_CALL libusb_get_config_descriptor_by_value(Device *dev,
-#	uint8 bConfigurationValue, struct ConfigDescriptor **config);
+#    uint8 bConfigurationValue, struct ConfigDescriptor **config);
     sub libusb_get_config_descriptor_by_value(Device                 $dev # Typedef<Device>->|Device|*
                                              ,uint8                       $bConfigurationValue # Typedef<uint8>->|unsigned char|
                                              ,Pointer[ConfigDescriptor]$config # ConfigDescriptor**
@@ -364,7 +395,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:977
 #void LIBUSB_CALL libusb_free_config_descriptor(
-#	struct ConfigDescriptor *config);
+#    struct ConfigDescriptor *config);
     sub libusb_free_config_descriptor(ConfigDescriptor $config # ConfigDescriptor*
                                       ) is native(LIB)  { * }
 
@@ -385,14 +416,14 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:982
 #int LIBUSB_CALL libusb_get_max_packet_size(Device *dev,
-#	unsigned char endpoint);
+#    unsigned char endpoint);
     sub libusb_get_max_packet_size(Device                 $dev # Typedef<Device>->|Device|*
                                   ,uint8                         $endpoint # unsigned char
                                    ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:984
 #int LIBUSB_CALL libusb_get_max_iso_packet_size(Device *dev,
-#	unsigned char endpoint);
+#    unsigned char endpoint);
     sub libusb_get_max_iso_packet_size(Device                 $dev # Typedef<Device>->|Device|*
                                       ,uint8                         $endpoint # unsigned char
                                        ) is native(LIB) returns int32 { * }
@@ -415,28 +446,28 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:991
 #int LIBUSB_CALL libusb_set_configuration(DeviceHandle *dev,
-#	int configuration);
+#    int configuration);
     sub libusb_set_configuration(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                 ,int32                         $configuration # int
                                  ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:993
 #int LIBUSB_CALL libusb_claim_interface(DeviceHandle *dev,
-#	int interface_number);
+#    int interface_number);
     sub libusb_claim_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                               ,int32                         $interface_number # int
                                ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:995
 #int LIBUSB_CALL libusb_release_interface(DeviceHandle *dev,
-#	int interface_number);
+#    int interface_number);
     sub libusb_release_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                 ,int32                         $interface_number # int
                                  ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:998
 #DeviceHandle * LIBUSB_CALL libusb_open_device_with_vid_pid(
-#	Context *ctx, uint16 vendor_id, uint16 product_id);
+#    Context *ctx, uint16 vendor_id, uint16 product_id);
     sub libusb_open_device_with_vid_pid(Context                $ctx # Typedef<Context>->|Context|*
                                        ,uint16                      $vendor_id # Typedef<uint16>->|short unsigned int|
                                        ,uint16                      $product_id # Typedef<uint16>->|short unsigned int|
@@ -444,7 +475,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1001
 #int LIBUSB_CALL libusb_set_interface_alt_setting(DeviceHandle *dev,
-#	int interface_number, int alternate_setting);
+#    int interface_number, int alternate_setting);
     sub libusb_set_interface_alt_setting(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                         ,int32                         $interface_number # int
                                         ,int32                         $alternate_setting # int
@@ -452,7 +483,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1003
 #int LIBUSB_CALL libusb_clear_halt(DeviceHandle *dev,
-#	unsigned char endpoint);
+#    unsigned char endpoint);
     sub libusb_clear_halt(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                          ,uint8                         $endpoint # unsigned char
                           ) is native(LIB) returns int32 { * }
@@ -464,21 +495,21 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1007
 #int LIBUSB_CALL libusb_kernel_driver_active(DeviceHandle *dev,
-#	int interface_number);
+#    int interface_number);
     sub libusb_kernel_driver_active(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                    ,int32                         $interface_number # int
                                     ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1009
 #int LIBUSB_CALL libusb_detach_kernel_driver(DeviceHandle *dev,
-#	int interface_number);
+#    int interface_number);
     sub libusb_detach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                    ,int32                         $interface_number # int
                                     ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1011
 #int LIBUSB_CALL libusb_attach_kernel_driver(DeviceHandle *dev,
-#	int interface_number);
+#    int interface_number);
     sub libusb_attach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                    ,int32                         $interface_number # int
                                     ) is native(LIB) returns int32 { * }
@@ -497,7 +528,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \returns pointer to the first byte of the data section
 # */
 #static inline unsigned char *libusb_control_transfer_get_data(
-#	struct Transfer *transfer)
+#    struct Transfer *transfer)
     sub libusb_control_transfer_get_data(Transfer $transfer # Transfer*
                                          ) is native(LIB) returns Pointer[uint8] { * }
 
@@ -515,7 +546,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \returns a casted pointer to the start of the transfer data buffer
 # */
 #static inline struct ControlSetup *libusb_control_transfer_get_setup(
-#	struct Transfer *transfer)
+#    struct Transfer *transfer)
     sub libusb_control_transfer_get_setup(Transfer $transfer # Transfer*
                                           ) is native(LIB) returns ControlSetup { * }
 
@@ -543,8 +574,8 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \ref ControlSetup
 # */
 #static inline void libusb_fill_control_setup(unsigned char *buffer,
-#	uint8 bmRequestType, uint8 bRequest, uint16 wValue, uint16 wIndex,
-#	uint16 wLength)
+#    uint8 bmRequestType, uint8 bRequest, uint16 wValue, uint16 wIndex,
+#    uint16 wLength)
     sub libusb_fill_control_setup(CArray[uint8]                $buffer # unsigned char*
                                  ,uint8                       $bmRequestType # Typedef<uint8>->|unsigned char|
                                  ,uint8                       $bRequest # Typedef<uint8>->|unsigned char|
@@ -602,9 +633,9 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \param timeout timeout for the transfer in milliseconds
 # */
 #static inline void libusb_fill_control_transfer(
-#	struct Transfer *transfer, DeviceHandle *dev_handle,
-#	unsigned char *buffer, Transfer_cb_fn callback, void *user_data,
-#	unsigned int timeout)
+#    struct Transfer *transfer, DeviceHandle *dev_handle,
+#    unsigned char *buffer, Transfer_cb_fn callback, void *user_data,
+#    unsigned int timeout)
     sub libusb_fill_control_transfer(Transfer               $transfer # Transfer*
                                     ,DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                                     ,CArray[uint8]                $buffer # unsigned char*
@@ -628,9 +659,9 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \param timeout timeout for the transfer in milliseconds
 # */
 #static inline void libusb_fill_bulk_transfer(struct Transfer *transfer,
-#	DeviceHandle *dev_handle, unsigned char endpoint,
-#	unsigned char *buffer, int length, Transfer_cb_fn callback,
-#	void *user_data, unsigned int timeout)
+#    DeviceHandle *dev_handle, unsigned char endpoint,
+#    unsigned char *buffer, int length, Transfer_cb_fn callback,
+#    void *user_data, unsigned int timeout)
     sub libusb_fill_bulk_transfer(Transfer               $transfer # Transfer*
                                  ,DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                                  ,uint8                         $endpoint # unsigned char
@@ -656,9 +687,9 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \param timeout timeout for the transfer in milliseconds
 # */
 #static inline void libusb_fill_interrupt_transfer(
-#	struct Transfer *transfer, DeviceHandle *dev_handle,
-#	unsigned char endpoint, unsigned char *buffer, int length,
-#	Transfer_cb_fn callback, void *user_data, unsigned int timeout)
+#    struct Transfer *transfer, DeviceHandle *dev_handle,
+#    unsigned char endpoint, unsigned char *buffer, int length,
+#    Transfer_cb_fn callback, void *user_data, unsigned int timeout)
     sub libusb_fill_interrupt_transfer(Transfer               $transfer # Transfer*
                                       ,DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                                       ,uint8                         $endpoint # unsigned char
@@ -685,9 +716,9 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \param timeout timeout for the transfer in milliseconds
 # */
 #static inline void libusb_fill_iso_transfer(struct Transfer *transfer,
-#	DeviceHandle *dev_handle, unsigned char endpoint,
-#	unsigned char *buffer, int length, int num_iso_packets,
-#	Transfer_cb_fn callback, void *user_data, unsigned int timeout)
+#    DeviceHandle *dev_handle, unsigned char endpoint,
+#    unsigned char *buffer, int length, int num_iso_packets,
+#    Transfer_cb_fn callback, void *user_data, unsigned int timeout)
     sub libusb_fill_iso_transfer(Transfer               $transfer # Transfer*
                                 ,DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                                 ,uint8                         $endpoint # unsigned char
@@ -709,7 +740,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \see libusb_get_max_packet_size()
 # */
 #static inline void libusb_set_iso_packet_lengths(
-#	struct Transfer *transfer, unsigned int length)
+#    struct Transfer *transfer, unsigned int length)
     sub libusb_set_iso_packet_lengths(Transfer               $transfer # Transfer*
                                      ,uint32                        $length # unsigned int
                                       ) is native(LIB)  { * }
@@ -732,7 +763,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \see libusb_get_iso_packet_buffer_simple()
 # */
 #static inline unsigned char *libusb_get_iso_packet_buffer(
-#	struct Transfer *transfer, unsigned int packet)
+#    struct Transfer *transfer, unsigned int packet)
     sub libusb_get_iso_packet_buffer(Transfer               $transfer # Transfer*
                                     ,uint32                        $packet # unsigned int
                                      ) is native(LIB) returns Pointer[uint8] { * }
@@ -758,15 +789,15 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \see libusb_get_iso_packet_buffer()
 # */
 #static inline unsigned char *libusb_get_iso_packet_buffer_simple(
-#	struct Transfer *transfer, unsigned int packet)
+#    struct Transfer *transfer, unsigned int packet)
     sub libusb_get_iso_packet_buffer_simple(Transfer               $transfer # Transfer*
                                            ,uint32                        $packet # unsigned int
                                             ) is native(LIB) returns Pointer[uint8] { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1317
 #int LIBUSB_CALL libusb_control_transfer(DeviceHandle *dev_handle,
-#	uint8 request_type, uint8 bRequest, uint16 wValue, uint16 wIndex,
-#	unsigned char *data, uint16 wLength, unsigned int timeout);
+#    uint8 request_type, uint8 bRequest, uint16 wValue, uint16 wIndex,
+#    unsigned char *data, uint16 wLength, unsigned int timeout);
     sub libusb_control_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                                ,uint8                       $request_type # Typedef<uint8>->|unsigned char|
                                ,uint8                       $bRequest # Typedef<uint8>->|unsigned char|
@@ -779,8 +810,8 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1321
 #int LIBUSB_CALL libusb_bulk_transfer(DeviceHandle *dev_handle,
-#	unsigned char endpoint, unsigned char *data, int length,
-#	int *actual_length, unsigned int timeout);
+#    unsigned char endpoint, unsigned char *data, int length,
+#    int *actual_length, unsigned int timeout);
     sub libusb_bulk_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                             ,uint8                         $endpoint # unsigned char
                             ,Pointer[uint8]                $data # unsigned char*
@@ -791,8 +822,8 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1325
 #int LIBUSB_CALL libusb_interrupt_transfer(DeviceHandle *dev_handle,
-#	unsigned char endpoint, unsigned char *data, int length,
-#	int *actual_length, unsigned int timeout);
+#    unsigned char endpoint, unsigned char *data, int length,
+#    int *actual_length, unsigned int timeout);
     sub libusb_interrupt_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
                                  ,uint8                         $endpoint # unsigned char
                                  ,Pointer[uint8]                $data # unsigned char*
@@ -815,7 +846,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \returns number of bytes returned in data, or LIBUSB_ERROR code on failure
 # */
 #static inline int libusb_get_descriptor(DeviceHandle *dev,
-#	uint8 desc_type, uint8 desc_index, unsigned char *data, int length)
+#    uint8 desc_type, uint8 desc_index, unsigned char *data, int length)
     sub libusb_get_descriptor(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                              ,uint8                       $desc_type # Typedef<uint8>->|unsigned char|
                              ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
@@ -839,7 +870,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 # * \see libusb_get_string_descriptor_ascii()
 # */
 #static inline int libusb_get_string_descriptor(DeviceHandle *dev,
-#	uint8 desc_index, uint16 langid, unsigned char *data, int length)
+#    uint8 desc_index, uint16 langid, unsigned char *data, int length)
     sub libusb_get_string_descriptor(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                     ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
                                     ,uint16                      $langid # Typedef<uint16>->|short unsigned int|
@@ -849,7 +880,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1370
 #int LIBUSB_CALL libusb_get_string_descriptor_ascii(DeviceHandle *dev,
-#	uint8 desc_index, unsigned char *data, int length);
+#    uint8 desc_index, unsigned char *data, int length);
     sub libusb_get_string_descriptor_ascii(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
                                           ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
                                           ,Pointer[uint8]                $data # unsigned char*
@@ -903,14 +934,14 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1384
 #int LIBUSB_CALL libusb_handle_events_timeout(Context *ctx,
-#	struct Timeval *tv);
+#    struct Timeval *tv);
     sub libusb_handle_events_timeout(Context                $ctx # Typedef<Context>->|Context|*
                                     ,Timeval                       $tv # Timeval*
                                      ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1386
 #int LIBUSB_CALL libusb_handle_events_timeout_completed(Context *ctx,
-#	struct Timeval *tv, int *completed);
+#    struct Timeval *tv, int *completed);
     sub libusb_handle_events_timeout_completed(Context                $ctx # Typedef<Context>->|Context|*
                                               ,Timeval                       $tv # Timeval*
                                               ,Pointer[int32]                $completed # int*
@@ -929,7 +960,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1390
 #int LIBUSB_CALL libusb_handle_events_locked(Context *ctx,
-#	struct Timeval *tv);
+#    struct Timeval *tv);
     sub libusb_handle_events_locked(Context                $ctx # Typedef<Context>->|Context|*
                                    ,Timeval                       $tv # Timeval*
                                     ) is native(LIB) returns int32 { * }
@@ -941,21 +972,21 @@ constant __pthread_slist_t := __pthread_internal_slist;
 
 #-From /usr/include/libusb-1.0/libusb.h:1393
 #int LIBUSB_CALL libusb_get_next_timeout(Context *ctx,
-#	struct Timeval *tv);
+#    struct Timeval *tv);
     sub libusb_get_next_timeout(Context                $ctx # Typedef<Context>->|Context|*
                                ,Timeval                       $tv # Timeval*
                                 ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1434
 #const struct PollFD ** LIBUSB_CALL libusb_get_pollfds(
-#	Context *ctx);
+#    Context *ctx);
     sub libusb_get_pollfds(Context $ctx # Typedef<Context>->|Context|*
                            ) is native(LIB) returns Pointer[PollFD] { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1437
 #void LIBUSB_CALL libusb_set_pollfd_notifiers(Context *ctx,
-#	PollFD_added_cb added_cb, PollFD_removed_cb removed_cb,
-#	void *user_data);
+#    PollFD_added_cb added_cb, PollFD_removed_cb removed_cb,
+#    void *user_data);
     sub libusb_set_pollfd_notifiers(Context                $ctx # Typedef<Context>->|Context|*
                                    ,&added_cb (int32, int16, Pointer) # Typedef<PollFD_added_cb>->|F:void ( int, short int, void*)*|
                                    ,&removed_cb (int32, Pointer) # Typedef<PollFD_removed_cb>->|F:void ( int, void*)*|
