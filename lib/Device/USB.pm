@@ -221,9 +221,40 @@ class Device::USB {
             if (my $code = libusb_get_device_descriptor(self, $dd) ) < 0 {
                 X::USB.new(:$code).throw;
             }
-
             $dd;
         }
+
+        sub libusb_get_bus_number(Device $dev) is native(LIB) returns uint8 { * }
+
+        method bus-number() returns Int {
+            libusb_get_bus_number(self);
+        }
+
+        sub libusb_get_device_address(Device $dev) is native(LIB) returns uint8 { * }
+
+        method address() returns Int  {
+            libusb_get_device_address(self);
+        }
+
+        sub libusb_get_device_speed(Device $dev) is native(LIB) returns int32 { * }
+
+        method speed() returns Speed {
+            Speed(libusb_get_device_speed(self));
+        }
+
+
+        sub libusb_get_max_packet_size(Device $dev, uint8 $endpoint) is native(LIB) returns int32 { * }
+
+        method max-packet-size(Int $endpoint) returns Int {
+            libusb_get_max_packet_size(self, $endpoint);
+        }
+
+        sub libusb_get_max_iso_packet_size(Device $dev, uint8 $endpoint ) is native(LIB) returns int32 { * }
+
+        method max-iso-packet-size(Int $endpoint ) returns Int {
+            libusb_get_max_iso_packet_size(self, $endpoint);
+        }
+
     }
 
     class DeviceHandle is repr('CPointer') {
@@ -420,35 +451,6 @@ constant __pthread_slist_t := __pthread_internal_slist;
 #    struct ConfigDescriptor *config);
     sub libusb_free_config_descriptor(ConfigDescriptor $config # ConfigDescriptor*
                                       ) is native(LIB)  { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:978
-#uint8 LIBUSB_CALL libusb_get_bus_number(Device *dev);
-    sub libusb_get_bus_number(Device $dev # Typedef<Device>->|Device|*
-                              ) is native(LIB) returns uint8 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:979
-#uint8 LIBUSB_CALL libusb_get_device_address(Device *dev);
-    sub libusb_get_device_address(Device $dev # Typedef<Device>->|Device|*
-                                  ) is native(LIB) returns uint8 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:980
-#int LIBUSB_CALL libusb_get_device_speed(Device *dev);
-    sub libusb_get_device_speed(Device $dev # Typedef<Device>->|Device|*
-                                ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:982
-#int LIBUSB_CALL libusb_get_max_packet_size(Device *dev,
-#    unsigned char endpoint);
-    sub libusb_get_max_packet_size(Device                 $dev # Typedef<Device>->|Device|*
-                                  ,uint8                         $endpoint # unsigned char
-                                   ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:984
-#int LIBUSB_CALL libusb_get_max_iso_packet_size(Device *dev,
-#    unsigned char endpoint);
-    sub libusb_get_max_iso_packet_size(Device                 $dev # Typedef<Device>->|Device|*
-                                      ,uint8                         $endpoint # unsigned char
-                                       ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:986
 #int LIBUSB_CALL libusb_open(Device *dev, DeviceHandle **handle);
