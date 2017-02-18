@@ -210,17 +210,27 @@ class Device::USB {
 
     }
 
+    sub check-call(Int $code) {
+        if $code < 0 {
+            X::USB.new(:$code).throw;
+        }
+    }
+
     class Context is repr('CPointer') {
     }
+
+    class DeviceHandle is repr('CPointer') {
+        ...
+    }
+
     class Device is repr('CPointer') {
         sub libusb_get_device_descriptor(Device $dev, DeviceDescriptor $desc ) is native(LIB) returns int32 { * }
 
         method device-descriptor() returns DeviceDescriptor {
             my $dd = DeviceDescriptor.new;
 
-            if (my $code = libusb_get_device_descriptor(self, $dd) ) < 0 {
-                X::USB.new(:$code).throw;
-            }
+            check-call libusb_get_device_descriptor(self, $dd)
+
             $dd;
         }
 
@@ -255,9 +265,38 @@ class Device::USB {
             libusb_get_max_iso_packet_size(self, $endpoint);
         }
 
+        sub libusb_open(Device $dev, Pointer[DeviceHandle] $handle is rw) is native(LIB) returns int32 { * }
+
+        method open() returns DeviceHandle {
+            my $pdh = Pointer[DeviceHandle].new;
+
+            check-call libusb_open(self, $pdh);
+
+            $pdh.deref;
+        }
+
     }
 
     class DeviceHandle is repr('CPointer') {
+        sub libusb_close(DeviceHandle $dev_handle) is native(LIB)  { * }
+
+        method close() {
+            libusb_close(self);
+        }
+
+        sub libusb_get_device(DeviceHandle $dev_handle) is native(LIB) returns Device { * }
+
+        method device() returns Device {
+            libusb_get_device(self);
+        }
+
+        sub libusb_get_configuration(DeviceHandle $dev, Pointer[int32] $config is rw ) is native(LIB) returns int32 { * }
+
+        method configuration() returns Int {
+            my $pconfig = Pointer[int32].new;
+
+            $pconfig.deref;
+        }
     }
 
 
@@ -340,12 +379,9 @@ constant __pthread_slist_t := __pthread_internal_slist;
     multi submethod BUILD() {
         my $ctx = Pointer[Context].new;
 
-        if libusb_init($ctx) < 0 {
-            X::USB.new(message => "Cannot initialise libusb");
-        }
-        else {
-            $!context = $ctx.deref;
-        }
+        check-call libusb_init($ctx);
+
+        $!context = $ctx.deref;
     }
 
 
@@ -415,12 +451,6 @@ constant __pthread_slist_t := __pthread_internal_slist;
     sub libusb_unref_device(Device $dev # Typedef<Device>->|Device|*
                             ) is native(LIB)  { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:967
-#int LIBUSB_CALL libusb_get_configuration(DeviceHandle *dev,
-#    int *config);
-    sub libusb_get_configuration(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                ,Pointer[int32]                $config # int*
-                                 ) is native(LIB) returns int32 { * }
 
 
 #-From /usr/include/libusb-1.0/libusb.h:971
@@ -452,21 +482,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
     sub libusb_free_config_descriptor(ConfigDescriptor $config # ConfigDescriptor*
                                       ) is native(LIB)  { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:986
-#int LIBUSB_CALL libusb_open(Device *dev, DeviceHandle **handle);
-    sub libusb_open(Device                 $dev # Typedef<Device>->|Device|*
-                   ,Pointer[DeviceHandle] $handle # Typedef<DeviceHandle>->|DeviceHandle|**
-                    ) is native(LIB) returns int32 { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:987
-#void LIBUSB_CALL libusb_close(DeviceHandle *dev_handle);
-    sub libusb_close(DeviceHandle $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
-                     ) is native(LIB)  { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:988
-#Device * LIBUSB_CALL libusb_get_device(DeviceHandle *dev_handle);
-    sub libusb_get_device(DeviceHandle $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
-                          ) is native(LIB) returns Device { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:991
 #int LIBUSB_CALL libusb_set_configuration(DeviceHandle *dev,
