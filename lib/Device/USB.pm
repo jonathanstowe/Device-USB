@@ -219,17 +219,39 @@ class Device::USB {
     class Context is repr('CPointer') {
     }
 
-    class DeviceHandle is repr('CPointer') {
+    class Device is repr('CPointer') {
         ...
     }
 
-    class Device is repr('CPointer') {
+    class DeviceHandle is repr('CPointer') {
+        sub libusb_close(DeviceHandle $dev_handle) is native(LIB)  { * }
+
+        method close() {
+            libusb_close(self);
+        }
+
+        sub libusb_get_device(DeviceHandle $dev_handle) is native(LIB) returns Device { * }
+
+        method device() returns Device {
+            libusb_get_device(self);
+        }
+
+        sub libusb_get_configuration(DeviceHandle $dev, Pointer[int32] $config is rw ) is native(LIB) returns int32 { * }
+
+        method configuration() returns Int {
+            my $pconfig = Pointer[int32].new;
+
+            $pconfig.deref;
+        }
+    }
+
+    class Device {
         sub libusb_get_device_descriptor(Device $dev, DeviceDescriptor $desc ) is native(LIB) returns int32 { * }
 
         method device-descriptor() returns DeviceDescriptor {
             my $dd = DeviceDescriptor.new;
 
-            check-call libusb_get_device_descriptor(self, $dd)
+            check-call libusb_get_device_descriptor(self, $dd);
 
             $dd;
         }
@@ -265,7 +287,7 @@ class Device::USB {
             libusb_get_max_iso_packet_size(self, $endpoint);
         }
 
-        sub libusb_open(Device $dev, Pointer[DeviceHandle] $handle is rw) is native(LIB) returns int32 { * }
+        sub libusb_open(Device $dev, Pointer[DeviceHandle] $handle) is native(LIB) returns int32 { * }
 
         method open() returns DeviceHandle {
             my $pdh = Pointer[DeviceHandle].new;
@@ -277,27 +299,6 @@ class Device::USB {
 
     }
 
-    class DeviceHandle is repr('CPointer') {
-        sub libusb_close(DeviceHandle $dev_handle) is native(LIB)  { * }
-
-        method close() {
-            libusb_close(self);
-        }
-
-        sub libusb_get_device(DeviceHandle $dev_handle) is native(LIB) returns Device { * }
-
-        method device() returns Device {
-            libusb_get_device(self);
-        }
-
-        sub libusb_get_configuration(DeviceHandle $dev, Pointer[int32] $config is rw ) is native(LIB) returns int32 { * }
-
-        method configuration() returns Int {
-            my $pconfig = Pointer[int32].new;
-
-            $pconfig.deref;
-        }
-    }
 
 
     class Version is repr('CStruct') {
