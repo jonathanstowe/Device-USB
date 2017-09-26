@@ -1,0 +1,36 @@
+{
+  "name": "Device::USB",
+  "source-url": "git://github.com/jonathanstowe/Device-USB.git",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/Device-USB.git"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:jonathanstowe",
+  "depends": [
+    
+  ],
+  "tags": [
+	"usb",
+	"device",
+	"libusb"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+  ],
+  "provides": {
+	"Device::USB" : "lib/Device/USB.pm"
+  },
+  "version": "0.0.1",
+  "meta-version": "0",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ],
+  "description": "Perl 6 access to USB busses and devices"
+}
