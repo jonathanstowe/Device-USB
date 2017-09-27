@@ -1,4 +1,5 @@
 use NativeCall;
+use NativeHelpers::Array;
 
 class Device::USB {
 
@@ -436,6 +437,15 @@ constant __pthread_slist_t := __pthread_internal_slist;
 #ssize_t LIBUSB_CALL libusb_get_device_list(Context *ctx,
 #    Device ***list);
     sub libusb_get_device_list(Context $ctx, Pointer[CArray[Device]] $list is rw ) is native(LIB) returns ssize_t { * }
+
+    method device-list( --> Array[Device]) {
+        my $list = Pointer[CArray[Device]].new;
+
+        my $num = libusb_get_device_list($!context, $list);
+        my $actual = $list.deref;
+        my Device @array = copy-to-array($actual, $num);
+        @array;
+    }
 
 #-From /usr/include/libusb-1.0/libusb.h:962
 #void LIBUSB_CALL libusb_free_device_list(Device **list,
