@@ -298,6 +298,19 @@ class Device::USB {
             $pdh.deref;
         }
 
+        sub libusb_ref_device(Device $dev) is native(LIB) returns Device { * }
+
+        method reference(--> Device) {
+            libusb_ref_device(self);
+        }
+
+        sub libusb_unref_device(Device $dev) is native(LIB)  { * }
+
+        method unreference() {
+            libusb_unref_device(self);
+        }
+
+
     }
 
 
@@ -444,6 +457,10 @@ constant __pthread_slist_t := __pthread_internal_slist;
         my $num = libusb_get_device_list($!context, $list);
         my $actual = $list.deref;
         my Device @array = copy-to-array($actual, $num);
+
+        # We're done with the list but will leave the Devices
+        # referenced as we don't know what the caller will do
+        libusb_free_device_list($actual, 0);
         @array;
     }
 
@@ -451,16 +468,6 @@ constant __pthread_slist_t := __pthread_internal_slist;
 #void LIBUSB_CALL libusb_free_device_list(Device **list,
 #    int unref_devices);
     sub libusb_free_device_list(CArray[Device] $list, int32 $unref_devices) is native(LIB)  { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:963
-#Device * LIBUSB_CALL libusb_ref_device(Device *dev);
-    sub libusb_ref_device(Device $dev # Typedef<Device>->|Device|*
-                          ) is native(LIB) returns Device { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:964
-#void LIBUSB_CALL libusb_unref_device(Device *dev);
-    sub libusb_unref_device(Device $dev # Typedef<Device>->|Device|*
-                            ) is native(LIB)  { * }
 
 
 
