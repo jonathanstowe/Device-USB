@@ -17,3 +17,22 @@ for $usb.device-list -> $dev {
 }
 
 ```
+
+## Description
+
+## Installation
+
+As long as you have a working Rakudo Perl 6 installation you should be able to install this
+with *zef* :
+
+    zef install Device::USB
+
+
+## Support
+
+
+## License
+
+This is free software, please see the [LICENCE](LICENCE) in the distribution.
+
+© Jonathan Stowe 2019 - 

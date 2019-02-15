@@ -1,18 +1,17 @@
 {
   "name": "Device::USB",
-  "source-url": "git://github.com/jonathanstowe/Device-USB.git",
+  "version": "0.0.1",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Perl 6 access to USB busses and devices",
+  "source-url": "https://github.com/jonathanstowe/Device-USB.git",
   "support": {
     "email": "jns+gh@gellyfish.co.uk",
-    "source": "git://github.com/jonathanstowe/Device-USB.git"
+    "source": "https://github.com/jonathanstowe/Device-USB.git"
   },
-  "perl": "6.c",
-  "resources": [
-    
-  ],
-  "build-depends": [
-    
-  ],
-  "auth": "github:jonathanstowe",
+  "perl": "6.*",
+  "resources": [ ],
+  "build-depends": [ ],
   "depends": [
       "NativeHelpers::Array"
   ],
@@ -27,10 +26,8 @@
   "provides": {
 	"Device::USB" : "lib/Device/USB.pm"
   },
-  "version": "0.0.1",
   "meta-version": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
-  ],
-  "description": "Perl 6 access to USB busses and devices"
+  ]
 }
