@@ -241,9 +241,72 @@ class Device::USB {
 
         method configuration() returns Int {
             my $pconfig = Pointer[int32].new;
-
+            libusb_get_configuration(self, $pconfig);
             $pconfig.deref;
         }
+#-From /usr/include/libusb-1.0/libusb.h:991
+#int LIBUSB_CALL libusb_set_configuration(DeviceHandle *dev,
+#    int configuration);
+        sub libusb_set_configuration(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                    ,int32                         $configuration # int
+                                     ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:993
+#int LIBUSB_CALL libusb_claim_interface(DeviceHandle *dev,
+#    int interface_number);
+        sub libusb_claim_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                  ,int32                         $interface_number # int
+                                   ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:995
+#int LIBUSB_CALL libusb_release_interface(DeviceHandle *dev,
+#    int interface_number);
+        sub libusb_release_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                    ,int32                         $interface_number # int
+                                     ) is native(LIB) returns int32 { * }
+
+
+#-From /usr/include/libusb-1.0/libusb.h:1001
+#int LIBUSB_CALL libusb_set_interface_alt_setting(DeviceHandle *dev,
+#    int interface_number, int alternate_setting);
+        sub libusb_set_interface_alt_setting(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                            ,int32                         $interface_number # int
+                                            ,int32                         $alternate_setting # int
+                                             ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1003
+#int LIBUSB_CALL libusb_clear_halt(DeviceHandle *dev,
+#    unsigned char endpoint);
+        sub libusb_clear_halt(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                             ,uint8                         $endpoint # unsigned char
+                              ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1004
+#int LIBUSB_CALL libusb_reset_device(DeviceHandle *dev);
+        sub libusb_reset_device(DeviceHandle $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1007
+#int LIBUSB_CALL libusb_kernel_driver_active(DeviceHandle *dev,
+#    int interface_number);
+        sub libusb_kernel_driver_active(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                       ,int32                         $interface_number # int
+                                        ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1009
+#int LIBUSB_CALL libusb_detach_kernel_driver(DeviceHandle *dev,
+#    int interface_number);
+        sub libusb_detach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                       ,int32                         $interface_number # int
+                                        ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1011
+#int LIBUSB_CALL libusb_attach_kernel_driver(DeviceHandle *dev,
+#    int interface_number);
+        sub libusb_attach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                       ,int32                         $interface_number # int
+                                        ) is native(LIB) returns int32 { * }
+
     }
 
     class Device {
@@ -464,12 +527,14 @@ constant __pthread_slist_t := __pthread_internal_slist;
         @array;
     }
 
-#-From /usr/include/libusb-1.0/libusb.h:962
-#void LIBUSB_CALL libusb_free_device_list(Device **list,
-#    int unref_devices);
     sub libusb_free_device_list(CArray[Device] $list, int32 $unref_devices) is native(LIB)  { * }
 
 
+    sub libusb_open_device_with_vid_pid(Context $ctx, uint16 $vendor_id, uint16 $product_id --> DeviceHandle ) is native(LIB) { * }
+
+    method open-device(Int $vendor-id, Int $product-id --> DeviceHandle ) {
+        libusb_open_device_with_vid_pid($!context, $vendor-id, $product-id)
+    }
 
 #-From /usr/include/libusb-1.0/libusb.h:971
 #int LIBUSB_CALL libusb_get_active_config_descriptor(Device *dev,
@@ -501,76 +566,6 @@ constant __pthread_slist_t := __pthread_internal_slist;
                                       ) is native(LIB)  { * }
 
 
-
-#-From /usr/include/libusb-1.0/libusb.h:991
-#int LIBUSB_CALL libusb_set_configuration(DeviceHandle *dev,
-#    int configuration);
-    sub libusb_set_configuration(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                ,int32                         $configuration # int
-                                 ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:993
-#int LIBUSB_CALL libusb_claim_interface(DeviceHandle *dev,
-#    int interface_number);
-    sub libusb_claim_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                              ,int32                         $interface_number # int
-                               ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:995
-#int LIBUSB_CALL libusb_release_interface(DeviceHandle *dev,
-#    int interface_number);
-    sub libusb_release_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                ,int32                         $interface_number # int
-                                 ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:998
-#DeviceHandle * LIBUSB_CALL libusb_open_device_with_vid_pid(
-#    Context *ctx, uint16 vendor_id, uint16 product_id);
-    sub libusb_open_device_with_vid_pid(Context                $ctx # Typedef<Context>->|Context|*
-                                       ,uint16                      $vendor_id # Typedef<uint16>->|short unsigned int|
-                                       ,uint16                      $product_id # Typedef<uint16>->|short unsigned int|
-                                        ) is native(LIB) returns DeviceHandle { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1001
-#int LIBUSB_CALL libusb_set_interface_alt_setting(DeviceHandle *dev,
-#    int interface_number, int alternate_setting);
-    sub libusb_set_interface_alt_setting(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                        ,int32                         $interface_number # int
-                                        ,int32                         $alternate_setting # int
-                                         ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1003
-#int LIBUSB_CALL libusb_clear_halt(DeviceHandle *dev,
-#    unsigned char endpoint);
-    sub libusb_clear_halt(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                         ,uint8                         $endpoint # unsigned char
-                          ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1004
-#int LIBUSB_CALL libusb_reset_device(DeviceHandle *dev);
-    sub libusb_reset_device(DeviceHandle $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                            ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1007
-#int LIBUSB_CALL libusb_kernel_driver_active(DeviceHandle *dev,
-#    int interface_number);
-    sub libusb_kernel_driver_active(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                   ,int32                         $interface_number # int
-                                    ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1009
-#int LIBUSB_CALL libusb_detach_kernel_driver(DeviceHandle *dev,
-#    int interface_number);
-    sub libusb_detach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                   ,int32                         $interface_number # int
-                                    ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1011
-#int LIBUSB_CALL libusb_attach_kernel_driver(DeviceHandle *dev,
-#    int interface_number);
-    sub libusb_attach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                   ,int32                         $interface_number # int
-                                    ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1028
 #/** \ingroup asyncio
