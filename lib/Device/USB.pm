@@ -202,7 +202,7 @@ class Device::USB {
         has Str $.message;
         has Int $.code;
 
-        method message() returns Str {
+        method message( --> Str ) {
             if $!code.defined {
                 $!message = libusb_error_name($!code);
             }
