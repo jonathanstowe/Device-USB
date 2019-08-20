@@ -281,24 +281,25 @@ class Device::USB {
                              ,uint8                         $endpoint # unsigned char
                               ) is native(LIB) returns int32 { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:1004
-#int LIBUSB_CALL libusb_reset_device(DeviceHandle *dev);
-        sub libusb_reset_device(DeviceHandle $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                ) is native(LIB) returns int32 { * }
+        sub libusb_reset_device(DeviceHandle $dev --> int32 ) is native(LIB) { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:1007
-#int LIBUSB_CALL libusb_kernel_driver_active(DeviceHandle *dev,
-#    int interface_number);
-        sub libusb_kernel_driver_active(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                       ,int32                         $interface_number # int
-                                        ) is native(LIB) returns int32 { * }
+        method reset-device() {
+            libusb_reset_device(self);
+        }
 
-#-From /usr/include/libusb-1.0/libusb.h:1009
-#int LIBUSB_CALL libusb_detach_kernel_driver(DeviceHandle *dev,
-#    int interface_number);
-        sub libusb_detach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                       ,int32                         $interface_number # int
-                                        ) is native(LIB) returns int32 { * }
+        sub libusb_kernel_driver_active(DeviceHandle $dev, int32 $interface_number --> int32 ) is native(LIB) { * }
+
+        method kernel-driver-active(Int $interface-number --> Bool ) {
+            # This probably isn't quite wrong as it is no/yes/something went wrong
+            ?libusb_kernel_driver_active(self, $interface-number);
+        }
+
+
+        sub libusb_detach_kernel_driver(DeviceHandle $dev,int32 $interface_number --> int32 ) is native(LIB) { * }
+
+        method detach-kernel-driver( Int $nterface-number --> Bool ) {
+            !libusb_detach_kernel_driver(self, $interface-number);
+        }
 
 #-From /usr/include/libusb-1.0/libusb.h:1011
 #int LIBUSB_CALL libusb_attach_kernel_driver(DeviceHandle *dev,
@@ -847,6 +848,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
                                            ,uint32                        $packet # unsigned int
                                             ) is native(LIB) returns Pointer[uint8] { * }
 
+# THIS ONE
 #-From /usr/include/libusb-1.0/libusb.h:1317
 #int LIBUSB_CALL libusb_control_transfer(DeviceHandle *dev_handle,
 #    uint8 request_type, uint8 bRequest, uint16 wValue, uint16 wIndex,
