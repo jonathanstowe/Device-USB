@@ -301,12 +301,105 @@ class Device::USB {
             !libusb_detach_kernel_driver(self, $interface-number);
         }
 
-#-From /usr/include/libusb-1.0/libusb.h:1011
-#int LIBUSB_CALL libusb_attach_kernel_driver(DeviceHandle *dev,
-#    int interface_number);
-        sub libusb_attach_kernel_driver(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                       ,int32                         $interface_number # int
-                                        ) is native(LIB) returns int32 { * }
+        sub libusb_attach_kernel_driver(DeviceHandle $dev, int32 $interface_number --> int32 ) is native(LIB) { * }
+
+        method attach-kernel-driver(Int $nterface-number --> Bool ) {
+            !libusb_attach_kernel_driver(%interface-number)
+        }
+
+# THIS ONE
+#-From /usr/include/libusb-1.0/libusb.h:1317
+#int LIBUSB_CALL libusb_control_transfer(DeviceHandle *dev_handle,
+#    uint8 request_type, uint8 bRequest, uint16 wValue, uint16 wIndex,
+#    unsigned char *data, uint16 wLength, unsigned int timeout);
+        sub libusb_control_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
+                                   ,uint8                       $request_type # Typedef<uint8>->|unsigned char|
+                                   ,uint8                       $bRequest # Typedef<uint8>->|unsigned char|
+                                   ,uint16                      $wValue # Typedef<uint16>->|short unsigned int|
+                                   ,uint16                      $wIndex # Typedef<uint16>->|short unsigned int|
+                                   ,Pointer[uint8]                $data # unsigned char*
+                                   ,uint16                      $wLength # Typedef<uint16>->|short unsigned int|
+                                   ,uint32                        $timeout # unsigned int
+                                    ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1321
+#int LIBUSB_CALL libusb_bulk_transfer(DeviceHandle *dev_handle,
+#    unsigned char endpoint, unsigned char *data, int length,
+#    int *actual_length, unsigned int timeout);
+        sub libusb_bulk_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
+                                ,uint8                         $endpoint # unsigned char
+                                ,Pointer[uint8]                $data # unsigned char*
+                                ,int32                         $length # int
+                                ,Pointer[int32]                $actual_length # int*
+                                ,uint32                        $timeout # unsigned int
+                                 ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1325
+#int LIBUSB_CALL libusb_interrupt_transfer(DeviceHandle *dev_handle,
+#    unsigned char endpoint, unsigned char *data, int length,
+#    int *actual_length, unsigned int timeout);
+        sub libusb_interrupt_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
+                                     ,uint8                         $endpoint # unsigned char
+                                     ,Pointer[uint8]                $data # unsigned char*
+                                     ,int32                         $length # int
+                                     ,Pointer[int32]                $actual_length # int*
+                                     ,uint32                        $timeout # unsigned int
+                                      ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1340
+#/** \ingroup desc
+# * Retrieve a descriptor from the default control pipe.
+# * This is a convenience function which formulates the appropriate control
+# * message to retrieve the descriptor.
+# *
+# * \param dev a device handle
+# * \param desc_type the descriptor type, see \ref DescriptorType
+# * \param desc_index the index of the descriptor to retrieve
+# * \param data output buffer for descriptor
+# * \param length size of data buffer
+# * \returns number of bytes returned in data, or LIBUSB_ERROR code on failure
+# */
+#static inline int libusb_get_descriptor(DeviceHandle *dev,
+#    uint8 desc_type, uint8 desc_index, unsigned char *data, int length)
+        sub libusb_get_descriptor(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                 ,uint8                       $desc_type # Typedef<uint8>->|unsigned char|
+                                 ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
+                                 ,Pointer[uint8]                $data # unsigned char*
+                                 ,int32                         $length # int
+                                  ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1362
+#/** \ingroup desc
+# * Retrieve a descriptor from a device.
+# * This is a convenience function which formulates the appropriate control
+# * message to retrieve the descriptor. The string returned is Unicode, as
+# * detailed in the USB specifications.
+# *
+# * \param dev a device handle
+# * \param desc_index the index of the descriptor to retrieve
+# * \param langid the language ID for the string descriptor
+# * \param data output buffer for descriptor
+# * \param length size of data buffer
+# * \returns number of bytes returned in data, or LIBUSB_ERROR code on failure
+# * \see libusb_get_string_descriptor_ascii()
+# */
+#static inline int libusb_get_string_descriptor(DeviceHandle *dev,
+#    uint8 desc_index, uint16 langid, unsigned char *data, int length)
+        sub libusb_get_string_descriptor(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                        ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
+                                        ,uint16                      $langid # Typedef<uint16>->|short unsigned int|
+                                        ,Pointer[uint8]                $data # unsigned char*
+                                        ,int32                         $length # int
+                                         ) is native(LIB) returns int32 { * }
+
+#-From /usr/include/libusb-1.0/libusb.h:1370
+#int LIBUSB_CALL libusb_get_string_descriptor_ascii(DeviceHandle *dev,
+#    uint8 desc_index, unsigned char *data, int length);
+        sub libusb_get_string_descriptor_ascii(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
+                                              ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
+                                              ,Pointer[uint8]                $data # unsigned char*
+                                              ,int32                         $length # int
+                                               ) is native(LIB) returns int32 { * }
 
     }
 
@@ -847,100 +940,6 @@ constant __pthread_slist_t := __pthread_internal_slist;
     sub libusb_get_iso_packet_buffer_simple(Transfer               $transfer # Transfer*
                                            ,uint32                        $packet # unsigned int
                                             ) is native(LIB) returns Pointer[uint8] { * }
-
-# THIS ONE
-#-From /usr/include/libusb-1.0/libusb.h:1317
-#int LIBUSB_CALL libusb_control_transfer(DeviceHandle *dev_handle,
-#    uint8 request_type, uint8 bRequest, uint16 wValue, uint16 wIndex,
-#    unsigned char *data, uint16 wLength, unsigned int timeout);
-    sub libusb_control_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
-                               ,uint8                       $request_type # Typedef<uint8>->|unsigned char|
-                               ,uint8                       $bRequest # Typedef<uint8>->|unsigned char|
-                               ,uint16                      $wValue # Typedef<uint16>->|short unsigned int|
-                               ,uint16                      $wIndex # Typedef<uint16>->|short unsigned int|
-                               ,Pointer[uint8]                $data # unsigned char*
-                               ,uint16                      $wLength # Typedef<uint16>->|short unsigned int|
-                               ,uint32                        $timeout # unsigned int
-                                ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1321
-#int LIBUSB_CALL libusb_bulk_transfer(DeviceHandle *dev_handle,
-#    unsigned char endpoint, unsigned char *data, int length,
-#    int *actual_length, unsigned int timeout);
-    sub libusb_bulk_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
-                            ,uint8                         $endpoint # unsigned char
-                            ,Pointer[uint8]                $data # unsigned char*
-                            ,int32                         $length # int
-                            ,Pointer[int32]                $actual_length # int*
-                            ,uint32                        $timeout # unsigned int
-                             ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1325
-#int LIBUSB_CALL libusb_interrupt_transfer(DeviceHandle *dev_handle,
-#    unsigned char endpoint, unsigned char *data, int length,
-#    int *actual_length, unsigned int timeout);
-    sub libusb_interrupt_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
-                                 ,uint8                         $endpoint # unsigned char
-                                 ,Pointer[uint8]                $data # unsigned char*
-                                 ,int32                         $length # int
-                                 ,Pointer[int32]                $actual_length # int*
-                                 ,uint32                        $timeout # unsigned int
-                                  ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1340
-#/** \ingroup desc
-# * Retrieve a descriptor from the default control pipe.
-# * This is a convenience function which formulates the appropriate control
-# * message to retrieve the descriptor.
-# *
-# * \param dev a device handle
-# * \param desc_type the descriptor type, see \ref DescriptorType
-# * \param desc_index the index of the descriptor to retrieve
-# * \param data output buffer for descriptor
-# * \param length size of data buffer
-# * \returns number of bytes returned in data, or LIBUSB_ERROR code on failure
-# */
-#static inline int libusb_get_descriptor(DeviceHandle *dev,
-#    uint8 desc_type, uint8 desc_index, unsigned char *data, int length)
-    sub libusb_get_descriptor(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                             ,uint8                       $desc_type # Typedef<uint8>->|unsigned char|
-                             ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
-                             ,Pointer[uint8]                $data # unsigned char*
-                             ,int32                         $length # int
-                              ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1362
-#/** \ingroup desc
-# * Retrieve a descriptor from a device.
-# * This is a convenience function which formulates the appropriate control
-# * message to retrieve the descriptor. The string returned is Unicode, as
-# * detailed in the USB specifications.
-# *
-# * \param dev a device handle
-# * \param desc_index the index of the descriptor to retrieve
-# * \param langid the language ID for the string descriptor
-# * \param data output buffer for descriptor
-# * \param length size of data buffer
-# * \returns number of bytes returned in data, or LIBUSB_ERROR code on failure
-# * \see libusb_get_string_descriptor_ascii()
-# */
-#static inline int libusb_get_string_descriptor(DeviceHandle *dev,
-#    uint8 desc_index, uint16 langid, unsigned char *data, int length)
-    sub libusb_get_string_descriptor(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                    ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
-                                    ,uint16                      $langid # Typedef<uint16>->|short unsigned int|
-                                    ,Pointer[uint8]                $data # unsigned char*
-                                    ,int32                         $length # int
-                                     ) is native(LIB) returns int32 { * }
-
-#-From /usr/include/libusb-1.0/libusb.h:1370
-#int LIBUSB_CALL libusb_get_string_descriptor_ascii(DeviceHandle *dev,
-#    uint8 desc_index, unsigned char *data, int length);
-    sub libusb_get_string_descriptor_ascii(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                          ,uint8                       $desc_index # Typedef<uint8>->|unsigned char|
-                                          ,Pointer[uint8]                $data # unsigned char*
-                                          ,int32                         $length # int
-                                           ) is native(LIB) returns int32 { * }
 
 #-From /usr/include/libusb-1.0/libusb.h:1374
 #int LIBUSB_CALL libusb_try_lock_events(Context *ctx);
