@@ -196,7 +196,7 @@ class Device::USB {
         has uint16                      $.wLength;
     }
 
-    sub libusb_error_name(int32 $errcode ) is native(LIB) returns Str { * }
+    sub libusb_error_name(int32 $errcode --> Str ) is native(LIB) { * }
 
     class X::USB is Exception {
         has Str $.message;
@@ -215,6 +215,7 @@ class Device::USB {
         if $code < 0 {
             X::USB.new(:$code).throw;
         }
+        $code;
     }
 
     class Context is repr('CPointer') {
@@ -231,39 +232,40 @@ class Device::USB {
             libusb_close(self);
         }
 
-        sub libusb_get_device(DeviceHandle $dev_handle) is native(LIB) returns Device { * }
+        sub libusb_get_device(DeviceHandle $dev_handle --> Device ) is native(LIB) { * }
 
-        method device() returns Device {
+        method device(--> Device ) {
             libusb_get_device(self);
         }
 
-        sub libusb_get_configuration(DeviceHandle $dev, Pointer[int32] $config is rw ) is native(LIB) returns int32 { * }
+        sub libusb_get_configuration(DeviceHandle $dev, Pointer[int32] $config is rw --> int32 ) is native(LIB) { * }
 
-        method configuration() returns Int {
+        proto method configuration(|c) { * }
+
+        multi method configuration( --> Int ) {
             my $pconfig = Pointer[int32].new;
             libusb_get_configuration(self, $pconfig);
             $pconfig.deref;
         }
-#-From /usr/include/libusb-1.0/libusb.h:991
-#int LIBUSB_CALL libusb_set_configuration(DeviceHandle *dev,
-#    int configuration);
-        sub libusb_set_configuration(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                    ,int32                         $configuration # int
-                                     ) is native(LIB) returns int32 { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:993
-#int LIBUSB_CALL libusb_claim_interface(DeviceHandle *dev,
-#    int interface_number);
-        sub libusb_claim_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                  ,int32                         $interface_number # int
-                                   ) is native(LIB) returns int32 { * }
+        sub libusb_set_configuration(DeviceHandle $dev,int32 $configuration --> int32 ) is native(LIB) { * }
 
-#-From /usr/include/libusb-1.0/libusb.h:995
-#int LIBUSB_CALL libusb_release_interface(DeviceHandle *dev,
-#    int interface_number);
-        sub libusb_release_interface(DeviceHandle          $dev # Typedef<DeviceHandle>->|DeviceHandle|*
-                                    ,int32                         $interface_number # int
-                                     ) is native(LIB) returns int32 { * }
+        multi method configuration(Int $configuration --> Int ) {
+            libusb_set_configuration(self, $configuration );
+            $configuration;
+        }
+
+        sub libusb_claim_interface(DeviceHandle $dev, int32 $interface_number --> int32) is native(LIB) { * }
+
+        method claim-interface(Int $interface-number --> Bool) {
+            !check-call libusb_claim_interface(self, $interface-number);
+        }
+
+        sub libusb_release_interface(DeviceHandle   $dev, int32 $interface_number --> int32 ) is native(LIB) { * }
+
+        method release-interface(Int $interface-number --> Bool ) {
+            !check-call libusb_release_interface(self, $interface-number);
+        }
 
 
 #-From /usr/include/libusb-1.0/libusb.h:1001
@@ -297,30 +299,43 @@ class Device::USB {
 
         sub libusb_detach_kernel_driver(DeviceHandle $dev,int32 $interface_number --> int32 ) is native(LIB) { * }
 
-        method detach-kernel-driver( Int $nterface-number --> Bool ) {
+        method detach-kernel-driver( Int $interface-number --> Bool ) {
             !libusb_detach_kernel_driver(self, $interface-number);
         }
 
         sub libusb_attach_kernel_driver(DeviceHandle $dev, int32 $interface_number --> int32 ) is native(LIB) { * }
 
-        method attach-kernel-driver(Int $nterface-number --> Bool ) {
-            !libusb_attach_kernel_driver(%interface-number)
+        method attach-kernel-driver(Int $interface-number --> Bool ) {
+            !libusb_attach_kernel_driver(self, $interface-number)
         }
 
-# THIS ONE
-#-From /usr/include/libusb-1.0/libusb.h:1317
-#int LIBUSB_CALL libusb_control_transfer(DeviceHandle *dev_handle,
-#    uint8 request_type, uint8 bRequest, uint16 wValue, uint16 wIndex,
-#    unsigned char *data, uint16 wLength, unsigned int timeout);
-        sub libusb_control_transfer(DeviceHandle          $dev_handle # Typedef<DeviceHandle>->|DeviceHandle|*
-                                   ,uint8                       $request_type # Typedef<uint8>->|unsigned char|
-                                   ,uint8                       $bRequest # Typedef<uint8>->|unsigned char|
-                                   ,uint16                      $wValue # Typedef<uint16>->|short unsigned int|
-                                   ,uint16                      $wIndex # Typedef<uint16>->|short unsigned int|
-                                   ,Pointer[uint8]                $data # unsigned char*
-                                   ,uint16                      $wLength # Typedef<uint16>->|short unsigned int|
-                                   ,uint32                        $timeout # unsigned int
-                                    ) is native(LIB) returns int32 { * }
+        sub libusb_control_transfer(DeviceHandle    $dev_handle,
+                                    uint8           $request_type,
+                                    uint8           $bRequest,
+                                    uint16          $wValue,
+                                    uint16          $wIndex,
+                                    CArray[uint8]   $data,
+                                    uint16          $wLength,
+                                    uint32          $timeout --> int32 ) is native(LIB) { * }
+
+        proto method control-transfer(|c) { * }
+
+=begin note
+
+dev_handle    a handle for the device to communicate with
+bmRequestType    the request type field for the setup packet
+bRequest    the request field for the setup packet
+wValue    the value field for the setup packet
+wIndex    the index field for the setup packet
+data    a suitably-sized data buffer for either input or output (depending on direction bits within bmRequestType)
+wLength    the length field for the setup packet. The data buffer should be at least this size.
+timeout    timeout (in millseconds) that this function should wait before giving up due to no response being received. For an unlimited timeout, use value 0.
+
+=end note
+
+        multi method control-transfer(Int $request-type, Int $bRequest, Int $wValue, Int $wIndex, CArray[uint8] $data, Int $wLength, Int $timeout) {
+            libusb_control_transfer(self, $request-type, $bRequest, $wValue, $wIndex, $data, $wLength, $timeout )
+        }
 
 #-From /usr/include/libusb-1.0/libusb.h:1321
 #int LIBUSB_CALL libusb_bulk_transfer(DeviceHandle *dev_handle,
@@ -573,7 +588,7 @@ constant __pthread_slist_t := __pthread_internal_slist;
 #-From /usr/include/libusb-1.0/libusb.h:954
 #void LIBUSB_CALL libusb_set_debug(Context *ctx, int level);
 
-    enum LogLevel (
+    enum LogLevel is export (
         LIBUSB_LOG_LEVEL_NONE => 0,
         LIBUSB_LOG_LEVEL_ERROR => 1,
         LIBUSB_LOG_LEVEL_WARNING => 2,

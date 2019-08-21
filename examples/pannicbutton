@@ -1,0 +1,35 @@
+#!/usr/bin/env perl6
+
+
+use Device::USB;
+
+my Device::USB $usb = Device::USB.new;
+
+#$usb.log-level(LIBUSB_LOG_LEVEL_DEBUG);
+
+my Device::USB::DeviceHandle $dev = $usb.open-device(0x1130, 0x0202);
+
+use NativeCall;
+
+
+try {
+    $dev.detach-kernel-driver(0);
+    $dev.detach-kernel-driver(1);
+    $dev.claim-interface(0);
+    $dev.claim-interface(1);
+    CATCH {
+        default {
+            $_.say;
+        }
+    }
+}
+
+loop {
+    my $data = CArray[uint8].new((0) xx 8);
+    say $dev.control-transfer(0xA1, 1, 0x300, 0, $data, 8 ,500);
+    say "pressed";
+}
+
+
+
+# vim: ft=perl6
