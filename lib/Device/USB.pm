@@ -228,13 +228,13 @@ class Device::USB {
     class DeviceHandle is repr('CPointer') {
         sub libusb_close(DeviceHandle $dev_handle) is native(LIB)  { * }
 
-        method close() {
+        method close(DeviceHandle:D:) {
             libusb_close(self);
         }
 
         sub libusb_get_device(DeviceHandle $dev_handle --> Device ) is native(LIB) { * }
 
-        method device(--> Device ) {
+        method device(DeviceHandle:D: --> Device ) {
             libusb_get_device(self);
         }
 
@@ -242,7 +242,7 @@ class Device::USB {
 
         proto method configuration(|c) { * }
 
-        multi method configuration( --> Int ) {
+        multi method configuration(DeviceHandle:D: --> Int ) {
             my $pconfig = Pointer[int32].new;
             libusb_get_configuration(self, $pconfig);
             $pconfig.deref;
@@ -250,20 +250,20 @@ class Device::USB {
 
         sub libusb_set_configuration(DeviceHandle $dev,int32 $configuration --> int32 ) is native(LIB) { * }
 
-        multi method configuration(Int $configuration --> Int ) {
+        multi method configuration(DeviceHandle:D: Int $configuration --> Int ) {
             libusb_set_configuration(self, $configuration );
             $configuration;
         }
 
         sub libusb_claim_interface(DeviceHandle $dev, int32 $interface_number --> int32) is native(LIB) { * }
 
-        method claim-interface(Int $interface-number --> Bool) {
+        method claim-interface(DeviceHandle:D: Int $interface-number --> Bool) {
             !check-call libusb_claim_interface(self, $interface-number);
         }
 
         sub libusb_release_interface(DeviceHandle   $dev, int32 $interface_number --> int32 ) is native(LIB) { * }
 
-        method release-interface(Int $interface-number --> Bool ) {
+        method release-interface(DeviceHandle:D: Int $interface-number --> Bool ) {
             !check-call libusb_release_interface(self, $interface-number);
         }
 
@@ -285,7 +285,7 @@ class Device::USB {
 
         sub libusb_reset_device(DeviceHandle $dev --> int32 ) is native(LIB) { * }
 
-        method reset-device() {
+        method reset-device(DeviceHandle:D:) {
             libusb_reset_device(self);
         }
 
