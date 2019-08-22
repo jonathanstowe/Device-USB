@@ -291,7 +291,7 @@ class Device::USB {
 
         sub libusb_kernel_driver_active(DeviceHandle $dev, int32 $interface_number --> int32 ) is native(LIB) { * }
 
-        method kernel-driver-active(Int $interface-number --> Bool ) {
+        method kernel-driver-active(DeviceHandle:D: Int $interface-number --> Bool ) {
             # This probably isn't quite wrong as it is no/yes/something went wrong
             ?libusb_kernel_driver_active(self, $interface-number);
         }
@@ -299,13 +299,13 @@ class Device::USB {
 
         sub libusb_detach_kernel_driver(DeviceHandle $dev,int32 $interface_number --> int32 ) is native(LIB) { * }
 
-        method detach-kernel-driver( Int $interface-number --> Bool ) {
+        method detach-kernel-driver(DeviceHandle:D: Int $interface-number --> Bool ) {
             !libusb_detach_kernel_driver(self, $interface-number);
         }
 
         sub libusb_attach_kernel_driver(DeviceHandle $dev, int32 $interface_number --> int32 ) is native(LIB) { * }
 
-        method attach-kernel-driver(Int $interface-number --> Bool ) {
+        method attach-kernel-driver(DeviceHandle:D: Int $interface-number --> Bool ) {
             !libusb_attach_kernel_driver(self, $interface-number)
         }
 
@@ -333,7 +333,7 @@ timeout    timeout (in millseconds) that this function should wait before giving
 
 =end note
 
-        multi method control-transfer(Int $request-type, Int $bRequest, Int $wValue, Int $wIndex, CArray[uint8] $data, Int $wLength, Int $timeout) {
+        multi method control-transfer(DeviceHandle:D: Int $request-type, Int $bRequest, Int $wValue, Int $wIndex, CArray[uint8] $data, Int $wLength, Int $timeout) {
             libusb_control_transfer(self, $request-type, $bRequest, $wValue, $wIndex, $data, $wLength, $timeout )
         }
 
